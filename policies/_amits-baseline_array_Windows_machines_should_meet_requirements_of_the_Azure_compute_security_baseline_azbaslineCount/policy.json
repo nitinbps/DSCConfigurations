@@ -1,0 +1,315 @@
+{
+ "properties": {
+  "displayName": "[amits-baseline array]Windows machines should meet requirements of the Azure compute security baseline",
+  "policyType": "Custom",
+  "mode": "Indexed",
+  "description": "Requires that prerequisites are deployed to the policy assignment scope. For details, visit https://aka.ms/gcpol. Machines are non-compliant if the machine is not configured correctly for one of the recommendations in the Azure compute security baseline.",
+  "metadata": {
+   "category": "Guest Configuration",
+   "version": "2.0.0",
+   "requiredProviders": [
+    "Microsoft.GuestConfiguration"
+   ],
+   "guestConfiguration": {
+    "name": "AzureWindowsBaseline",
+    "version": "1.*",
+    "configurationParameter": {
+     "NetworkSecurityConfigureEncryptionTypesAllowedForKerberos": "Network Security: Configure encryption types allowed for Kerberos;ExpectedValue",
+     "NetworkSecurityLANManagerAuthenticationLevel": "Network security: LAN Manager authentication level;ExpectedValue"
+    }
+   },
+   "createdBy": "cf38f268-bf7b-4d70-ad46-c7e6bea34eaa",
+   "createdOn": "2023-03-14T23:31:42.4738715Z",
+   "updatedBy": "cf38f268-bf7b-4d70-ad46-c7e6bea34eaa",
+   "updatedOn": "2023-03-15T01:25:21.9203501Z"
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "string",
+    "metadata": {
+     "displayName": "Include Arc connected servers",
+     "description": "By selecting this option, you agree to be charged monthly per Arc connected machine.",
+     "portalReview": "true"
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "NetworkSecurityConfigureEncryptionTypesAllowedForKerberos": {
+    "type": "string",
+    "metadata": {
+     "displayName": "Network Security: Configure encryption types allowed for Kerberos",
+     "description": "Specifies the encryption types that Kerberos is allowed to use."
+    },
+    "defaultValue": "2147483644"
+   },
+   "NetworkSecurityLANManagerAuthenticationLevel": {
+    "type": "string",
+    "metadata": {
+     "displayName": "Network security: LAN Manager authentication level",
+     "description": "Specify which challenge-response authentication protocol is used for network logons. This choice affects the level of authentication protocol used by clients, the level of session security negotiated, and the level of authentication accepted by servers."
+    },
+    "defaultValue": "5"
+   },
+   "effect": {
+    "type": "string",
+    "metadata": {
+     "displayName": "Effect",
+     "description": "Enable or disable the execution of this policy"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.Compute/imagePublisher",
+          "in": [
+           "esri",
+           "incredibuild",
+           "MicrosoftDynamicsAX",
+           "MicrosoftSharepoint",
+           "MicrosoftVisualStudio",
+           "MicrosoftWindowsDesktop",
+           "MicrosoftWindowsServerHPCPack"
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftWindowsServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftSQLServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "notLike": "SQL2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-dsvm"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "dsvm-win*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-ads"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "standard-data-science-vm",
+             "windows-data-science-vm"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "batch"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "rendering-windows2016"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "center-for-internet-security-inc"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "cis-windows-server-201*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "pivotal"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "bosh-windows-server*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "cloud-infrastructure-services"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "ad*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/virtualMachines/osProfile.windowsConfiguration",
+              "exists": "true"
+             },
+             {
+              "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+              "like": "Windows*"
+             }
+            ]
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/imageSKU",
+              "exists": "false"
+             },
+             {
+              "allOf": [
+               {
+                "field": "Microsoft.Compute/imageSKU",
+                "notLike": "2008*"
+               },
+               {
+                "field": "Microsoft.Compute/imageOffer",
+                "notLike": "SQL2008*"
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "value": "[parameters('IncludeArcMachines')]",
+        "equals": "true"
+       },
+       {
+        "anyOf": [
+         {
+          "allOf": [
+           {
+            "field": "type",
+            "equals": "Microsoft.HybridCompute/machines"
+           },
+           {
+            "field": "Microsoft.HybridCompute/imageOffer",
+            "like": "windows*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "type",
+            "equals": "Microsoft.ConnectedVMwarevSphere/virtualMachines"
+           },
+           {
+            "field": "Microsoft.ConnectedVMwarevSphere/virtualMachines/osProfile.osType",
+            "like": "windows*"
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
+     "name": "AzureWindowsBaseline",
+     "existenceCondition": {
+      "count": {
+       "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/guestConfiguration.configurationParameter[*]",
+       "where": {
+        "anyOf": [
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/guestConfiguration.configurationParameter[*].name",
+            "equals": "Network Security: Configure encryption types allowed for Kerberos;ExpectedValue"
+           },
+           {
+            "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/guestConfiguration.configurationParameter[*].value",
+            "equals": "[parameters('NetworkSecurityConfigureEncryptionTypesAllowedForKerberos')]"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/guestConfiguration.configurationParameter[*].name",
+            "equals": "Network security: LAN Manager authentication level;NotExpectedValue"
+           },
+           {
+            "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/guestConfiguration.configurationParameter[*].value",
+            "equals": "[parameters('NetworkSecurityLANManagerAuthenticationLevel')]"
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "equals": 2
+     }
+    }
+   }
+  }
+ },
+ "id": "/subscriptions/749b3ae2-9109-4e10-86cc-8f998779feee/providers/Microsoft.Authorization/policyDefinitions/azbaslineCount",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "azbaslineCount"
+}
